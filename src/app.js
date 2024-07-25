@@ -19,6 +19,8 @@ app.use('/api/products/', productsRouter)
 
 initMongoDB()
 
+
+
 app.listen(port, () => {
     console.log(`Escuchando en el puerto ${port}`)
 })
