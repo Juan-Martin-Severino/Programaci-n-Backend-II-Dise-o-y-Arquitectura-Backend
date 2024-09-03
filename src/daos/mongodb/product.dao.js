@@ -1,12 +1,11 @@
 import { ProductModel } from "./models/product.model.js";
 
-export default class ProductDaoMongoDB {
-  async getAll(page = 1, limit = 10, name, sort) {
+export default class ProductDao {
+  async getAllProducts(page = 1, limit = 10, title, sort) {
     try {
-      const filter = name ? { 'name': name } : {};
+      const filter = title ? { 'title': title } : {};
       let sortOrder = {};
       if(sort) sortOrder.price = sort === 'asc' ? 1 : sort === 'desc' ? -1 : null;
-      //{price: 1}
       const response = await ProductModel.paginate(filter, { page, limit, sort: sortOrder });
       return response;
     } catch (error) {
@@ -14,7 +13,7 @@ export default class ProductDaoMongoDB {
     }
   }
 
-  async getById(id) {
+  async getProductById(id) {
     try {
       const response = await ProductModel.findById(id);
       return response;
@@ -23,7 +22,7 @@ export default class ProductDaoMongoDB {
     }
   }
 
-  async create(obj) {
+  async createProduct(obj) {
     try {
       const response = await ProductModel.create(obj);
       return response;
@@ -32,7 +31,7 @@ export default class ProductDaoMongoDB {
     }
   }
 
-  async update(id, obj) {
+  async updateProduct(id, obj) {
     try {
       const response = await ProductModel.findByIdAndUpdate(id, obj, {
         new: true,
@@ -43,7 +42,7 @@ export default class ProductDaoMongoDB {
     }
   }
 
-  async delete(id) {
+  async deleteProduct(id) {
     try {
       const response = await ProductModel.findByIdAndDelete(id);
       return response;

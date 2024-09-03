@@ -1,49 +1,50 @@
 import ProductDaoMongoDB from "../daos/mongodb/product.dao.js";
-const prodDao = new ProductDaoMongoDB();
 
-export const getAll = async (page, limit, name, sort) => {
+const productDao = new ProductDaoMongoDB();
+
+export const getAllProducts = async (page, limit, title, sort) => {
   try {
-    return await prodDao.getAll(page, limit, name, sort);
+    return await productDao.getAllProducts(page, limit, title, sort);
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getById = async (id) => {
+export const getProductById = async (id) => {
   try {
-    const prod = await prodDao.getById(id);
-    if (!prod) return false;
-    else return prod;
+    const foundProduct = await productDao.getProductById(id);
+    if (!foundProduct) return false;
+    else return foundProduct;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const create = async (obj) => {
+export const createProduct = async (obj) => {
   try {
-    const newProd = await prodDao.create(obj);
-    if (!newProd) return false;
-    else return newProd;
+    const newProduct = await productDao.createProduct(obj);
+    if (!newProduct) return false;
+    else return newProduct;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const update = async (id, obj) => {
+export const updateProduct = async (id, obj) => {
   try {
-    const prodUpd = await prodDao.update(id, obj);
-    if (!prodUpd) return false;
-    else return prodUpd;
+    const productUpdate = await productDao.updateProduct(id, obj);
+    if (!productUpdate) return false;
+    else return productUpdate;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const remove = async (id) => {
+export const deleteProduct = async (id) => {
   try {
-    const prodDel = await prodDao.delete(id);
-    if (!prodDel) return false;
-    else return prodDel;
+    const productToDelete = await productDao.deleteProduct(id);
+    if (!productToDelete) return false;
+    else return productToDelete;
   } catch (error) {
     console.log(error);
   }

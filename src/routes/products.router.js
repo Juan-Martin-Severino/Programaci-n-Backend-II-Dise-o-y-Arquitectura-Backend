@@ -1,20 +1,24 @@
 import { Router } from "express";
-import * as controller from "../controllers/product.controller.js"
-import { productValidator } from '../middlewares/productValidator.js'
-import { idValidator } from "../middlewares/idValidator.js";
+import * as productController from "../controllers/product.controller.js";
+import { productValidation } from "../middlewares/productValidation.js";
+import { idValidation } from "../middlewares/idValidation.js";
+import passport from "passport";
+import { roleValidation } from "../middlewares/rolevalidation.js";
 
 
+const productRouter = Router();
 
-const router = Router();
 
-router.get("/", controller.getAll);
+productRouter.get("/", productController.getAllProducts);
 
-router.get("/:id", controller.getById);
+productRouter.get("/:pid", productController.getProductById);
 
-router.post("/", productValidator, controller.create);
+productRouter.post("/", productValidation, passport.authenticate("jwt", { session: false }), roleValidation(['admin']), productController.createProduct);
 
-router.put("/:id", idValidator, controller.update);
+productRouter.post("/baseinicio", productController.createProduct); // un solo uso: para agregar los 45 productos de ejemplo
 
-router.delete("/:id", controller.remove);
+productRouter.put("/:pid", idValidation, passport.authenticate("jwt", { session: false }), roleValidation(['admin']), productController.updateProduct);
 
-export default router;
+productRouter.delete("/:pid", passport.authenticate("jwt", { session: false }), roleValidation(['admin']), productController.deleteProduct)
+
+export default productRouter;

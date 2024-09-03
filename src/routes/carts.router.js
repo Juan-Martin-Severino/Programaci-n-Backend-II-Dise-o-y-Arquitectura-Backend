@@ -1,25 +1,30 @@
-import { Router } from "express"
-import * as controller from "../controllers/cart.controller.js"
-
-const router = Router()
-
-router.get("/", controller.getAll);
-
-router.get("/:id", controller.getById);
-
-router.post("/", controller.create);
-
-router.put("/:id", controller.update);
-
-router.delete("/:id", controller.remove);
-
-router.post("/:idCart/products/:idProd", controller.addProdToCart);
-
-router.delete("/:idCart/products/:idProd", controller.removeProdToCart);
-
-router.put("/:idCart/products/:idProd", controller.updateProdQuantityToCart);
-
-router.delete("/clear/:idCart", controller.clearCart);
+import { Router } from "express";
+import * as cartController from "../controllers/cart.controller.js";
+import passport from "passport";
+import { roleValidation } from "../middlewares/rolevalidation.js";
 
 
-export default router
+const cartRouter = Router();
+
+
+cartRouter.get("/", passport.authenticate("jwt",{session: false}), roleValidation(['admin']), cartController.getAllCarts)
+
+cartRouter.get("/:cid", passport.authenticate("jwt",{session: false}), roleValidation(['admin','user']), cartController.getCartById);
+
+cartRouter.post("/", passport.authenticate("jwt",{session: false}), roleValidation(['admin','user']), cartController.createCart);
+
+cartRouter.post("/:cid/product/:pid", passport.authenticate("jwt",{session: false}), roleValidation(['admin','user']), cartController.addProductToCart);
+
+cartRouter.put("/:cid", passport.authenticate("jwt",{session: false}), roleValidation(['admin','user']), cartController.updateCart);
+
+cartRouter.put("/:cid/product/:pid", passport.authenticate("jwt",{session: false}), roleValidation(['admin','user']), cartController.updateProdQuantity);
+
+cartRouter.delete("/:cid/erase", passport.authenticate("jwt",{session: false}), roleValidation(['admin']), cartController.deleteCart);
+
+cartRouter.delete("/:cid/product/:pid", passport.authenticate("jwt",{session: false}), roleValidation(['admin','user']), cartController.removefromCart);
+
+cartRouter.delete("/:cid", passport.authenticate("jwt",{session: false}), roleValidation(['admin','user']), cartController.clearCart);
+
+cartRouter.get('/:cid/purchase',passport.authenticate("jwt",{session: false}), roleValidation(['admin','user']), cartController.purchase)
+
+export default cartRouter;

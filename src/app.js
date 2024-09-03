@@ -2,8 +2,8 @@ import express from 'express'
 import mongoose from 'mongoose'
 import morgan from 'morgan'
 import passport from 'passport'
-import sessionRoutes from "./routes/session.routes.js"
-import userRoutes from "./routes/user.routes.js"
+import authRouter from "./routes/auth.router.js"
+import userRouter from "./routes/user.router.js"
 import cookieParser from 'cookie-parser'
 import { initializePassport } from './config/passport.config.js'
 import cartRouter from './routes/carts.router.js'
@@ -35,8 +35,8 @@ mongoose
   });
 
 
-app.use("/api/session", sessionRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
 app.use('/api/carts/', cartRouter)
 app.use('/api/products/', productsRouter)
 

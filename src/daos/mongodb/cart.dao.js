@@ -1,7 +1,7 @@
 import { CartModel } from "./models/cart.model.js";
 
-export default class CartDaoMongoDB {
-  async create() {
+export default class CartDao {
+  async createCart() {
     try {
       return await CartModel.create({
         products: [],
@@ -11,7 +11,7 @@ export default class CartDaoMongoDB {
     }
   }
 
-  async getAll() {
+  async getAllCarts() {
     try {
       return await CartModel.find({});
     } catch (error) {
@@ -19,70 +19,14 @@ export default class CartDaoMongoDB {
     }
   }
 
-  async getById(id) {
+  async getCartById(id) {
     try {
       return await CartModel.findById(id).populate("products.product");
     } catch (error) {
       console.log(error);
     }
   }
-
-  async delete(id) {
-    try {
-      return await CartModel.findByIdAndDelete(id);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async existProdInCart(cartId, prodId){
-    try {
-      return await CartModel.findOne({
-        _id: cartId,
-        products: { $elemMatch: { product: prodId } }
-      });
-      // return await CartModel.findOne(
-      //   { _id: cartId, 'products.product': prodId }
-      // )
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  async addProdToCart(cartId, prodId) {
-    try {
-      const existProdInCart = await this.existProdInCart(cartId, prodId);
-        if(existProdInCart){
-          return await CartModel.findOneAndUpdate(
-            { _id: cartId, 'products.product': prodId },
-            { $set: { 'products.$.quantity': existProdInCart.products[0].quantity + 1 } },
-            { new: true }
-          );
-        } else {
-          return await CartModel.findByIdAndUpdate(
-            cartId,
-            { $push: { products: { product: prodId } } },
-            { new: true }
-          )
-        }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async removeProdToCart(cartId, prodId) {
-    try {
-      return await CartModel.findByIdAndUpdate(
-        { _id: cartId },
-        { $pull: { products: { product: prodId } } },
-        { new: true }
-      )
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async update(id, obj) {
+  async updateCart(id, obj) {
     try {
       const response = await CartModel.findByIdAndUpdate(id, obj, {
         new: true,
@@ -93,10 +37,63 @@ export default class CartDaoMongoDB {
     }
   }
 
-  async updateProdQuantityToCart(cartId, prodId, quantity) {
+  async deleteCart(id) {
+    try {
+      return await CartModel.findByIdAndDelete(id);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async isInCart(cartId, productId){
+    try {
+      return await CartModel.findOne({
+        _id: cartId,
+        products: { $elemMatch: { product: productId } }
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async addProductToCart(cartId, productId) {
+    try {
+      const prodInCart = await this.isInCart(cartId, productId);
+        if(prodInCart){
+          return await CartModel.findOneAndUpdate(
+            { _id: cartId, 'products.product': productId },
+            { $set: { 'products.$.quantity': prodInCart.products[0].quantity + 1 } },
+            { new: true }
+          );
+        } else {
+          return await CartModel.findByIdAndUpdate(
+            cartId,
+            { $push: { products: { product: productId } } },
+            { new: true }
+          )
+        }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async removefromCart(cartId, productId) {
+    try {
+      return await CartModel.findByIdAndUpdate(
+        { _id: cartId },
+        { $pull: { products: { product: productId } } },
+        { new: true }
+      )
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  
+  async updateProdQuantity(cartId, productId, quantity) {
     try {
       return await CartModel.findOneAndUpdate(
-        { _id: cartId, 'products.product': prodId },
+        { _id: cartId, 'products.product': productId },
         { $set: { 'products.$.quantity': quantity } },
         { new: true }
       );
